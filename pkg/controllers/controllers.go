@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
 
@@ -225,6 +226,7 @@ func Register(ctx context.Context, systemNamespace string, cfg clientcmd.ClientC
 		appCtx.Core,
 		appCtx.GitRepo(),
 		appCtx.ImageScan())
+	fmt.Println("hi fleet!")
 
 	leader.RunOrDie(ctx, systemNamespace, "fleet-controller-lock", appCtx.K8s, func(ctx context.Context) {
 		if err := appCtx.start(ctx); err != nil {

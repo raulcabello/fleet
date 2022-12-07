@@ -1,11 +1,11 @@
 package agent
 
 import (
+	"fmt"
+	"github.com/sirupsen/logrus"
 	"path"
 	"strconv"
 	"strings"
-
-	"github.com/sirupsen/logrus"
 
 	"github.com/rancher/fleet/pkg/config"
 	"github.com/rancher/wrangler/pkg/name"
@@ -41,9 +41,11 @@ type ManifestOptions struct {
 //
 // This is called by both, import and manageagent.
 func Manifest(namespace string, agentScope string, opts ManifestOptions) []runtime.Object {
+	fmt.Println("In Manifest " + opts.AgentImage)
 	if opts.AgentImage == "" {
 		opts.AgentImage = config.DefaultAgentImage
 	}
+	fmt.Println("AIn Manifest " + opts.AgentImage)
 
 	sa := serviceAccount(namespace, DefaultName)
 
