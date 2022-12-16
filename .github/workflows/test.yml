@@ -1,0 +1,12 @@
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - run: make integration-test
