@@ -15,9 +15,11 @@ $(TARGETS): .dapper
 
 .PHONY: $(TARGETS)
 
+.PHONY: install-setup-envtest
 install-setup-envtest: ## Install setup-envtest.
 	go install sigs.k8s.io/controller-runtime/tools/setup-envtest@$(SETUP_ENVTEST_VER)
 
+.PHONY: setup-envtest
 setup-envtest: install-setup-envtest # Build setup-envtest
 	@if [ $(shell go env GOOS) == "darwin" ]; then \
 		$(eval KUBEBUILDER_ASSETS := $(shell setup-envtest use --use-env -p path --arch amd64 $(ENVTEST_K8S_VERSION))) \
