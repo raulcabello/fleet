@@ -21,13 +21,7 @@ install-setup-envtest: ## Install setup-envtest.
 
 .PHONY: setup-envtest
 setup-envtest: install-setup-envtest # Build setup-envtest
-	@if [ $(shell go env GOOS) == "darwin" ]; then \
-		$(eval KUBEBUILDER_ASSETS := $(shell setup-envtest use --use-env -p path --arch amd64 $(ENVTEST_K8S_VERSION))) \
-		echo "kube-builder assets set using darwin OS"; \
-	else \
-		$(eval KUBEBUILDER_ASSETS := $(shell setup-envtest use --use-env -p path $(ENVTEST_K8S_VERSION))) \
-		echo "kube-builder assets set using other OS"; \
-	fi
+	$(eval KUBEBUILDER_ASSETS := $(shell setup-envtest use --use-env -p path $(ENVTEST_K8S_VERSION)))
 
 integration-test: setup-envtest
 	KUBEBUILDER_ASSETS="$(KUBEBUILDER_ASSETS)" go test ./integrationtests/...
