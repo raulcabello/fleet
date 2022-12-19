@@ -1,12 +1,9 @@
 name: CI
 
 on:
-  schedule:
-    - cron:  '0 5 * * *'
-  pull_request:
   push:
     branches:
-    - 'release/*"'
+    - '*"'
 
 env:
   GOARCH: amd64
