@@ -70,7 +70,7 @@ func globDirs(baseDir string) (result []string, err error) {
 // Apply creates bundles from the baseDirs, their names are prefixed with
 // repoName. Depending on opts.Output the bundles are created in the cluster or
 // printed to stdout, ...
-func Apply(ctx context.Context, client *client.Getter, repoName string, baseDirs []string, opts *Options) error {
+func Apply(ctx context.Context, client client.Getter, repoName string, baseDirs []string, opts *Options) error {
 	if opts == nil {
 		opts = &Options{}
 	}
@@ -133,13 +133,13 @@ func Apply(ctx context.Context, client *client.Getter, repoName string, baseDirs
 }
 
 // pruneBundlesNotFoundInRepo lists all bundles for this gitrepo and prunes those not found in the repo
-func pruneBundlesNotFoundInRepo(client *client.Getter, repoName string, gitRepoBundlesMap map[string]bool) error {
+func pruneBundlesNotFoundInRepo(client client.Getter, repoName string, gitRepoBundlesMap map[string]bool) error {
 	c, err := client.Get()
 	if err != nil {
 		return err
 	}
 	filter := labels.Set(map[string]string{fleet.RepoLabel: repoName})
-	bundles, err := c.Fleet.Bundle().List(client.Namespace, metav1.ListOptions{LabelSelector: filter.AsSelector().String()})
+	bundles, err := c.Fleet.Bundle().List(client.GetNamespace(), metav1.ListOptions{LabelSelector: filter.AsSelector().String()})
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func createName(name, baseDir string) string {
 	return name2.Hex(filepath.Join(name, baseDir), 24)
 }
 
-func Dir(ctx context.Context, client *client.Getter, name, baseDir string, opts *Options, gitRepoBundlesMap map[string]bool) error {
+func Dir(ctx context.Context, client client.Getter, name, baseDir string, opts *Options, gitRepoBundlesMap map[string]bool) error {
 	if opts == nil {
 		opts = &Options{}
 	}
@@ -236,7 +236,7 @@ func Dir(ctx context.Context, client *client.Getter, name, baseDir string, opts 
 	}
 
 	def := bundle.DeepCopy()
-	def.Namespace = client.Namespace
+	def.Namespace = client.GetNamespace()
 
 	if len(def.Spec.Resources) == 0 {
 		return ErrNoResources
@@ -262,7 +262,7 @@ func Dir(ctx context.Context, client *client.Getter, name, baseDir string, opts 
 	return err
 }
 
-func save(client *client.Getter, bundle *fleet.Bundle, imageScans ...*fleet.ImageScan) error {
+func save(client client.Getter, bundle *fleet.Bundle, imageScans ...*fleet.ImageScan) error {
 	c, err := client.Get()
 	if err != nil {
 		return err
@@ -287,7 +287,7 @@ func save(client *client.Getter, bundle *fleet.Bundle, imageScans ...*fleet.Imag
 	}
 
 	for _, scan := range imageScans {
-		scan.Namespace = client.Namespace
+		scan.Namespace = client.GetNamespace()
 		scan.Spec.GitRepoName = bundle.Labels[fleet.RepoLabel]
 		obj, err := c.Fleet.ImageScan().Get(scan.Namespace, scan.Name, metav1.GetOptions{})
 		if apierrors.IsNotFound(err) {

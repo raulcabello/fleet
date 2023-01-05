@@ -11,17 +11,26 @@ import (
 	"github.com/rancher/wrangler/pkg/kubeconfig"
 )
 
-type Getter struct {
+type Getter interface {
+	Get() (*Client, error)
+	GetNamespace() string
+}
+
+type getter struct {
 	Kubeconfig string
 	Context    string
 	Namespace  string
 }
 
-func (g *Getter) Get() (*Client, error) {
+func (g *getter) Get() (*Client, error) {
 	if g == nil {
 		return nil, fmt.Errorf("client is not configured, please set client getter")
 	}
 	return NewClient(g.Kubeconfig, g.Context, g.Namespace)
+}
+
+func (g *getter) GetNamespace() string {
+	return g.Namespace
 }
 
 type Client struct {
@@ -31,8 +40,12 @@ type Client struct {
 	Namespace string
 }
 
-func NewGetter(kubeconfig, context, namespace string) *Getter {
-	return &Getter{
+func NewGetterWithNamespace(namespace string) Getter {
+	return &getter{Namespace: namespace}
+}
+
+func NewGetter(kubeconfig, context, namespace string) Getter {
+	return &getter{
 		Kubeconfig: kubeconfig,
 		Context:    context,
 		Namespace:  namespace,

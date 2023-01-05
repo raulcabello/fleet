@@ -43,7 +43,7 @@ type Options struct {
 // the agent config inside a configmap.
 //
 // This is used when importing a cluster.
-func AgentWithConfig(ctx context.Context, agentNamespace, controllerNamespace, agentScope string, cg *client.Getter, output io.Writer, tokenName string, opts *Options) error {
+func AgentWithConfig(ctx context.Context, agentNamespace, controllerNamespace, agentScope string, cg client.Getter, output io.Writer, tokenName string, opts *Options) error {
 	if opts == nil {
 		opts = &Options{}
 	}

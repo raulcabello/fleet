@@ -16,7 +16,7 @@ type ConfigOptions struct {
 	ClientID string
 }
 
-func agentConfig(ctx context.Context, agentNamespace, controllerNamespace string, cg *client.Getter, opts *ConfigOptions) ([]runtime.Object, error) {
+func agentConfig(ctx context.Context, agentNamespace, controllerNamespace string, cg client.Getter, opts *ConfigOptions) ([]runtime.Object, error) {
 	if opts == nil {
 		opts = &ConfigOptions{}
 	}
