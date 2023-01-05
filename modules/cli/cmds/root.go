@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	Client          *client.Getter
+	Client          client.Getter
 	SystemNamespace string
 	Debug           command.DebugConfig
 )

@@ -254,7 +254,7 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 	err = agent.AgentWithConfig(
 		i.ctx, agentNamespace, i.systemNamespace,
 		cluster.Spec.AgentNamespace,
-		&client.Getter{Namespace: cluster.Namespace},
+		client.NewGetterWithNamespace(cluster.Namespace),
 		output,
 		token.Name,
 		&agent.Options{
