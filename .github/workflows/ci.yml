@@ -6,7 +6,7 @@ on:
   pull_request:
   push:
     branches:
-    - 'release/*"'
+    - 'deleteme'
 
 env:
   GOARCH: amd64
