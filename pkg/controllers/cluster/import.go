@@ -166,6 +166,12 @@ func (i *importHandler) deleteOldAgent(cluster *fleet.Cluster, kc kubernetes.Int
 }
 
 func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.ClusterStatus) (_ fleet.ClusterStatus, err error) {
+	// if the agent namespace is still fleet-system, it means it was not migrated.
+	// TODO remove info comment!
+	logrus.Infof("importing cluster: agent ns ->" + cluster.Status.Agent.Namespace)
+	if cluster.Status.Agent.Namespace == config.LegacyDefaultNamespace {
+		cluster.Status.CattleNamespaceMigrated = false
+	}
 	if cluster.Spec.KubeConfigSecret == "" ||
 		agentDeployed(cluster) ||
 		cluster.Spec.ClientID == "" {
@@ -318,7 +324,11 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 
 	status.AgentDeployedGeneration = &cluster.Spec.RedeployAgentGeneration
 	status.AgentMigrated = true
-	status.CattleNamespaceMigrated = true
+	if cluster.Spec.AgentNamespace != config.LegacyDefaultNamespace {
+		status.CattleNamespaceMigrated = true
+		// TODO remove comment!
+		logrus.Infof("CattleNamespaceMigrated set to true" + cluster.Spec.AgentNamespace)
+	}
 	status.Agent = fleet.AgentStatus{
 		Namespace: cluster.Spec.AgentNamespace,
 	}
