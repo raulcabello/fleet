@@ -168,10 +168,11 @@ func (i *importHandler) deleteOldAgent(cluster *fleet.Cluster, kc kubernetes.Int
 func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.ClusterStatus) (_ fleet.ClusterStatus, err error) {
 	// if the agent namespace is still fleet-system, it means it was not migrated.
 	// TODO remove info comment!
-	logrus.Infof("importing cluster: agent ns ->" + cluster.Status.Agent.Namespace)
-	if cluster.Status.Agent.Namespace == config.LegacyDefaultNamespace {
+	logrus.Infof("importing cluster: agent ns ->" + cluster.Status.Agent.Namespace + " cluster: " + cluster.Name)
+	/*	if cluster.Status.Agent.Namespace == config.LegacyDefaultNamespace {
+		logrus.Infof("cluster.Status.CattleNamespaceMigrated = false")
 		cluster.Status.CattleNamespaceMigrated = false
-	}
+	}*/
 	if cluster.Spec.KubeConfigSecret == "" ||
 		agentDeployed(cluster) ||
 		cluster.Spec.ClientID == "" {
@@ -242,6 +243,7 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 			},
 		})
 		i.clusters.EnqueueAfter(cluster.Namespace, cluster.Name, 2*time.Second)
+		fmt.Println("returning because of err! " + err.Error())
 		return status, nil
 	}
 
@@ -281,6 +283,7 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 		return status, err
 	}
 
+	fmt.Println(" cluster: " + cluster.Name + "cluster.Spec.AgentNamespace " + cluster.Spec.AgentNamespace + " agentNamespace " + agentNamespace + " cluster.Status.AgentNamespaceMigrated" + strconv.FormatBool(cluster.Status.AgentNamespaceMigrated))
 	if cluster.Spec.AgentNamespace != "" && (cluster.Status.Agent.Namespace != agentNamespace || !cluster.Status.AgentNamespaceMigrated) {
 		// delete old agent if moving namespaces for agent
 		if err := i.deleteOldAgentBundle(cluster); err != nil {
@@ -293,6 +296,9 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 		}
 	}
 
+	fmt.Println("deleteOldAgent cluster: " + cluster.Name + " agentNamespace: " + agentNamespace + "systemNamespace: " + i.systemNamespace)
+
+	// this is deleting agent in cattle-fleet-systems!
 	if err := i.deleteOldAgent(cluster, kc, agentNamespace); err != nil {
 		return status, err
 	}
@@ -302,12 +308,12 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 	}
 	logrus.Infof("Deployed new agent for cluster %s/%s", cluster.Namespace, cluster.Name)
 
-	if i.systemNamespace != config.DefaultNamespace {
+	if i.systemNamespace != config.LegacyDefaultNamespace {
 		// Clean up the leftover agent if it exists.
-		_, err := kc.CoreV1().Namespaces().Get(i.ctx, config.DefaultNamespace, metav1.GetOptions{})
+		_, err := kc.CoreV1().Namespaces().Get(i.ctx, config.LegacyDefaultNamespace, metav1.GetOptions{})
 		if err == nil {
-			logrus.Infof("System namespace (%s) does not equal default namespace (%s), checking for leftover objects...", i.systemNamespace, config.DefaultNamespace)
-			if err := i.deleteOldAgent(cluster, kc, config.DefaultNamespace); err != nil {
+			logrus.Infof("System namespace (%s) does not equal default namespace (%s), checking for leftover objects...", i.systemNamespace, config.LegacyDefaultNamespace)
+			if err := i.deleteOldAgent(cluster, kc, config.LegacyDefaultNamespace); err != nil {
 				return status, err
 			}
 		} else if !apierrors.IsNotFound(err) {
@@ -316,7 +322,7 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 
 		// Clean up the leftover clusters namespace if it exists.
 		// We want to keep the DefaultNamespace alive, but not the clusters namespace.
-		err = kc.CoreV1().Namespaces().Delete(i.ctx, fleetns.RegistrationNamespace(config.DefaultNamespace), metav1.DeleteOptions{})
+		err = kc.CoreV1().Namespaces().Delete(i.ctx, fleetns.RegistrationNamespace(config.LegacyDefaultNamespace), metav1.DeleteOptions{})
 		if err != nil && !apierrors.IsNotFound(err) {
 			return status, err
 		}
@@ -324,11 +330,11 @@ func (i *importHandler) importCluster(cluster *fleet.Cluster, status fleet.Clust
 
 	status.AgentDeployedGeneration = &cluster.Spec.RedeployAgentGeneration
 	status.AgentMigrated = true
-	if cluster.Spec.AgentNamespace != config.LegacyDefaultNamespace {
-		status.CattleNamespaceMigrated = true
-		// TODO remove comment!
-		logrus.Infof("CattleNamespaceMigrated set to true" + cluster.Spec.AgentNamespace)
-	}
+	//	if cluster.Spec.AgentNamespace != config.LegacyDefaultNamespace {
+	status.CattleNamespaceMigrated = true
+	// TODO remove comment!
+	//	logrus.Infof("CattleNamespaceMigrated set to true" + cluster.Spec.AgentNamespace)
+	//}
 	status.Agent = fleet.AgentStatus{
 		Namespace: cluster.Spec.AgentNamespace,
 	}
