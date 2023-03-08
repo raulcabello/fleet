@@ -326,6 +326,7 @@ func (h *Helm) install(bundleID string, manifest *manifest.Manifest, chart *char
 	}
 
 	if uninstall {
+		// delete if helm release status is "uninstalling"
 		if err := h.delete(bundleID, options, dryRun); err != nil {
 			return nil, err
 		}
@@ -639,13 +640,9 @@ func (h *Helm) deleteByRelease(bundleID, releaseName string, keepResources bool)
 		return err
 	}
 
-	if strings.HasPrefix(bundleID, "fleet-agent") {
-		// Never uninstall the fleet-agent, just "forget" it
-		return deleteHistory(cfg, bundleID)
-	}
-
-	if keepResources {
-		// don't delete resources, just delete the helm release secrets
+	// don't delete resources for fleet-agent or if keepResources is true,
+	// delete the helm release secrets instead
+	if strings.HasPrefix(bundleID, "fleet-agent") || keepResources {
 		return deleteHistory(cfg, bundleID)
 	}
 
@@ -685,8 +682,9 @@ func (h *Helm) delete(bundleID string, options fleet.BundleDeploymentOptions, dr
 		return err
 	}
 
-	if strings.HasPrefix(bundleID, "fleet-agent") {
-		// Never uninstall the fleet-agent, just "forget" it
+	// don't delete resources for fleet-agent or if keepResources is true,
+	// delete the helm release secrets instead
+	if strings.HasPrefix(bundleID, "fleet-agent") || options.KeepResources {
 		return deleteHistory(cfg, bundleID)
 	}
 
