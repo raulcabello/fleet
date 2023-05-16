@@ -178,6 +178,12 @@ func (m *Manager) MonitorBundle(bd *fleet.BundleDeployment) (DeploymentStatus, e
 	}
 	if len(status.ModifiedStatus) == 0 {
 		status.NonModified = true
+	} else {
+		//some resource has changed, apply drift correction!
+		err = m.deployer.RemoveExternalChanges(bd)
+		if err != nil {
+			return status, err
+		}
 	}
 
 	return status, nil

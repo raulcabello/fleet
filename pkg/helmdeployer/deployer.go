@@ -193,6 +193,27 @@ func (p *postRender) Run(renderedManifests *bytes.Buffer) (modifiedManifests *by
 	return bytes.NewBuffer(data), err
 }
 
+func (h *Helm) RemoveExternalChanges(bd *fleet.BundleDeployment) error {
+	logrus.Infof("Drift correction: rollback BundleDeployment %s", bd.Name)
+
+	_, defaultNamespace, releaseName := h.getOpts(bd.Name, bd.Spec.Options)
+
+	cfg, err := h.getCfg(defaultNamespace, bd.Spec.Options.ServiceAccount)
+	if err != nil {
+		return err
+	}
+	currentRelease, err := cfg.Releases.Last(releaseName)
+	if err != nil {
+		return err
+	}
+
+	r := action.NewRollback(&cfg)
+	r.Version = currentRelease.Version
+	r.Force = true
+
+	return r.Run(releaseName)
+}
+
 func (h *Helm) Deploy(bundleID string, manifest *manifest.Manifest, options fleet.BundleDeploymentOptions) (*Resources, error) {
 	if options.Helm == nil {
 		options.Helm = &fleet.HelmOptions{}
