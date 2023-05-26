@@ -97,8 +97,10 @@ func Apply(ctx context.Context, client *client.Getter, repoName string, baseDirs
 				if !createBundle {
 					return nil
 				}
-				if auth, ok := opts.AuthByPath[baseDir]; ok {
+				if auth, ok := opts.AuthByPath[path]; ok {
 					opts.Auth = auth
+				} else {
+					opts.Auth = bundlereader.Auth{}
 				}
 				if err := Dir(ctx, client, repoName, path, opts, gitRepoBundlesMap); err == ErrNoResources {
 					logrus.Warnf("%s: %v", path, err)

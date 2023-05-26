@@ -24,6 +24,45 @@ var _ = Describe("Fleet apply helm release", func() {
 	When("applying a folder with fleet.yaml that contains a helm release in the chart field", Serial, func() {
 		testHelmRepo("helm_chart_url", ":3001")
 	})
+
+	When("applying a folder with fleet.yaml that contains a sub folder with another fleet.yaml", func() {
+		var repo = repository{
+			port: ":3003",
+		}
+		BeforeEach(func() {
+			repo.startRepository(true)
+		})
+		AfterEach(func() {
+			err := repo.stopRepository()
+			Expect(err).NotTo(HaveOccurred())
+		})
+		When("path credentials are provided just for root folder", func() {
+			It("fleet apply fails for sub folder", func() {
+				Eventually(func() string {
+					err := fleetApply([]string{cli.AssetsPath + "helm_path_credentials"}, &apply.Options{
+						AuthByPath: map[string]bundlereader.Auth{cli.AssetsPath + "helm_path_credentials": {Username: username, Password: password}},
+					})
+					Expect(err).To(HaveOccurred())
+					return err.Error()
+				}).Should(ContainSubstring("401"))
+			})
+		})
+		When("path credentials are provided for both root and sub folder", func() {
+			It("fleet apply works fine", func() {
+				Eventually(func() error {
+					return fleetApply([]string{cli.AssetsPath + "helm_path_credentials"}, &apply.Options{
+						AuthByPath: map[string]bundlereader.Auth{
+							cli.AssetsPath + "helm_path_credentials":           {Username: username, Password: password},
+							cli.AssetsPath + "helm_path_credentials/subfolder": {Username: username, Password: password},
+						},
+					})
+				}).Should(Not(HaveOccurred()))
+				By("verifying Bundle is created with all the resources inside of the helm release", func() {
+					Eventually(verifyResourcesArePresent).Should(BeTrue())
+				})
+			})
+		})
+	})
 })
 
 func testHelmRepo(path, port string) {

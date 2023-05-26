@@ -9,6 +9,6 @@ entries:
     name: testrepo
     type: application
     urls:
-    - http://localhost:3000/config-chart-0.1.0.tgz
+    - http://localhost:3000/config-chart-0.1.0.tgz #TODO change 3000 based on port chosen
     version: 0.1.0
 generated: "2023-01-03T11:05:22.378100239+01:00"
