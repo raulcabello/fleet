@@ -11,16 +11,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sirupsen/logrus"
-
+	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/rancher/fleet/internal/bundlereader"
 	"github.com/rancher/fleet/internal/client"
 	"github.com/rancher/fleet/internal/fleetyaml"
 	name2 "github.com/rancher/fleet/internal/name"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
+	"github.com/sirupsen/logrus"
 
 	"github.com/rancher/wrangler/pkg/yaml"
 
+	"github.com/go-git/go-git/v5"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -54,10 +55,15 @@ type Options struct {
 	CorrectDrift                bool
 	CorrectDriftForce           bool
 	CorrectDriftKeepFailHistory bool
+	GitRepo                     string
+	GitAuth                     transport.AuthMethod
+	GitInsecureSkipTLS          bool
+	GitCABundle                 []byte
+	GitKnownHostsFile           string
 }
 
 func globDirs(baseDir string) (result []string, err error) {
-	for strings.HasPrefix(baseDir, "/") {
+	for strings.HasPrefix(baseDir, "/") && !isCloningGitRepo(baseDir) {
 		baseDir = baseDir[1:]
 	}
 	paths, err := filepath.Glob(baseDir)
@@ -72,12 +78,24 @@ func globDirs(baseDir string) (result []string, err error) {
 	return
 }
 
+func isCloningGitRepo(baseDir string) bool {
+	return strings.HasPrefix(baseDir, "/tmp/fleet")
+}
+
 // Apply creates bundles from the baseDirs, their names are prefixed with
 // repoName. Depending on opts.Output the bundles are created in the cluster or
 // printed to stdout, ...
 func Apply(ctx context.Context, client Getter, repoName string, baseDirs []string, opts Options) error {
 	if len(baseDirs) == 0 {
 		baseDirs = []string{"."}
+	}
+	if opts.GitRepo != "" {
+		repoDir, err := cloneRepo(opts)
+		if err != nil {
+			return fmt.Errorf("error cloning repo: %w", err)
+		}
+		defer os.RemoveAll(repoDir)
+		baseDirs = appendDirPrefix(baseDirs, repoDir)
 	}
 
 	foundBundle := false
@@ -133,6 +151,15 @@ func Apply(ctx context.Context, client Getter, repoName string, baseDirs []strin
 	}
 
 	return nil
+}
+
+func appendDirPrefix(dirs []string, prefix string) []string {
+	result := make([]string, 0)
+	for _, dir := range dirs {
+		result = append(result, prefix+"/"+dir)
+	}
+
+	return result
 }
 
 // pruneBundlesNotFoundInRepo lists all bundles for this gitrepo and prunes those not found in the repo
@@ -349,4 +376,23 @@ func hasSubDirectoryWithResourcesAndWithoutFleetYaml(path string) (bool, error) 
 	}
 
 	return false, nil
+}
+
+func cloneRepo(opts Options) (string, error) {
+	tmpDir, err := os.MkdirTemp("", "fleet")
+	if err != nil {
+		return "", err
+	}
+
+	_, err = git.PlainClone(tmpDir, false, &git.CloneOptions{
+		URL:             opts.GitRepo,
+		Auth:            opts.GitAuth,
+		InsecureSkipTLS: opts.GitInsecureSkipTLS,
+		CABundle:        opts.GitCABundle,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return tmpDir, nil
 }
