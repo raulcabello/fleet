@@ -2,6 +2,7 @@ package singlecluster_test
 
 import (
 	"encoding/json"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"time"
 
 	"github.com/rancher/fleet/e2e/testenv"
@@ -29,7 +30,10 @@ var _ = Describe("BundleDiffs", func() {
 		}
 
 		if out == "" {
-			return nil, apierrors.NewNotFound(v1alpha1.Resource("bundledeployment"), repo)
+			return nil, apierrors.NewNotFound(schema.GroupResource{
+				Group:    v1alpha1.SchemeGroupVersion.Group,
+				Resource: v1alpha1.BundleDeploymentResourceName,
+			}, repo)
 		}
 
 		status := &v1alpha1.BundleDeploymentStatus{}

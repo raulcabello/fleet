@@ -11,6 +11,7 @@ import (
 )
 
 const BundleDeploymentResourceNamePlural = "bundledeployments"
+const BundleDeploymentResourceName = "bundledeployment"
 
 func init() {
 	SchemeBuilder.Register(&BundleDeployment{}, &BundleDeploymentList{})
