@@ -199,7 +199,7 @@ func (h *handler) fetchNamespace(releaseID string) (*corev1.Namespace, error) {
 	// releaseID is composed of release.Namespace/release.Name/release.Version
 	namespace := strings.Split(releaseID, "/")[0]
 	list, err := h.dynamic.Resource(nsResource).List(h.ctx, metav1.ListOptions{
-		LabelSelector: "name=" + namespace,
+		LabelSelector: "kubernetes.io/metadata.name=" + namespace,
 	})
 	if err != nil {
 		return nil, err
