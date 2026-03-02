@@ -137,7 +137,7 @@ func (a *Analyze) Run(cmd *cobra.Command, args []string) error {
 	}
 
 	// Read snapshots from input
-	snapshots, err := a.readSnapshots(input)
+	snapshots, err := a.ReadSnapshots(input)
 	if err != nil {
 		return err
 	}
@@ -149,21 +149,21 @@ func (a *Analyze) Run(cmd *cobra.Command, args []string) error {
 	// Execute appropriate mode
 	switch {
 	case a.JSON:
-		return a.outputJSON(cmd, snapshots)
+		return a.OutputJSON(cmd, snapshots)
 	case a.All:
-		return a.outputAll(cmd, snapshots)
+		return a.OutputAll(cmd, snapshots)
 	case a.Diff:
-		return a.outputDiff(cmd, snapshots)
+		return a.OutputDiff(cmd, snapshots)
 	case a.Issues:
-		return a.outputIssues(cmd, snapshots)
+		return a.OutputIssues(cmd, snapshots)
 	case a.Detailed:
-		return a.outputDetailed(cmd, snapshots)
+		return a.OutputDetailed(cmd, snapshots)
 	default:
-		return a.outputSummary(cmd, snapshots[len(snapshots)-1])
+		return a.OutputSummary(cmd, snapshots[len(snapshots)-1])
 	}
 }
 
-func (a *Analyze) readSnapshots(input io.Reader) ([]*Snapshot, error) {
+func (a *Analyze) ReadSnapshots(input io.Reader) ([]*Snapshot, error) {
 	var snapshots []*Snapshot
 	scanner := bufio.NewScanner(input)
 
@@ -191,7 +191,7 @@ func (a *Analyze) readSnapshots(input io.Reader) ([]*Snapshot, error) {
 	return snapshots, nil
 }
 
-func (a *Analyze) outputSummary(cmd *cobra.Command, snapshot *Snapshot) error {
+func (a *Analyze) OutputSummary(cmd *cobra.Command, snapshot *Snapshot) error {
 	w := cmd.OutOrStdout()
 
 	printHeader(w, "FLEET MONITORING SUMMARY - "+snapshot.Timestamp)
@@ -217,13 +217,13 @@ func (a *Analyze) outputSummary(cmd *cobra.Command, snapshot *Snapshot) error {
 	if snapshot.Diagnostics != nil {
 		fmt.Fprintln(w)
 		printSubHeader(w, "DIAGNOSTICS SUMMARY")
-		a.printDiagnosticsSummary(w, snapshot.Diagnostics)
+		a.PrintDiagnosticsSummary(w, snapshot.Diagnostics)
 	}
 
 	return nil
 }
 
-func (a *Analyze) printDiagnosticsSummary(w io.Writer, diag *Diagnostics) {
+func (a *Analyze) PrintDiagnosticsSummary(w io.Writer, diag *Diagnostics) {
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
 	// Stuck Resources
@@ -296,7 +296,7 @@ func (a *Analyze) printDiagnosticsSummary(w io.Writer, diag *Diagnostics) {
 	tw.Flush()
 }
 
-func (a *Analyze) outputAll(cmd *cobra.Command, snapshots []*Snapshot) error {
+func (a *Analyze) OutputAll(cmd *cobra.Command, snapshots []*Snapshot) error {
 	w := cmd.OutOrStdout()
 
 	printHeader(w, fmt.Sprintf("Analyzing %d snapshots", len(snapshots)))
@@ -304,7 +304,7 @@ func (a *Analyze) outputAll(cmd *cobra.Command, snapshots []*Snapshot) error {
 	for i, snapshot := range snapshots {
 		fmt.Fprintf(w, "\n")
 		printInfo(w, fmt.Sprintf("Snapshot %d/%d", i+1, len(snapshots)))
-		if err := a.outputSummary(cmd, snapshot); err != nil {
+		if err := a.OutputSummary(cmd, snapshot); err != nil {
 			return err
 		}
 		fmt.Fprintln(w, strings.Repeat("─", 60))
@@ -313,7 +313,7 @@ func (a *Analyze) outputAll(cmd *cobra.Command, snapshots []*Snapshot) error {
 	return nil
 }
 
-func (a *Analyze) outputDiff(cmd *cobra.Command, snapshots []*Snapshot) error {
+func (a *Analyze) OutputDiff(cmd *cobra.Command, snapshots []*Snapshot) error {
 	w := cmd.OutOrStdout()
 
 	if len(snapshots) < 2 {
@@ -330,17 +330,17 @@ func (a *Analyze) outputDiff(cmd *cobra.Command, snapshots []*Snapshot) error {
 		printSubHeader(w, fmt.Sprintf("Snapshot %d → %d", i, i+1))
 		fmt.Fprintf(w, "Time: %s → %s\n", before.Timestamp, after.Timestamp)
 
-		a.printSnapshotDiff(w, before, after)
+		a.PrintSnapshotDiff(w, before, after)
 		fmt.Fprintln(w, strings.Repeat("─", 60))
 	}
 
 	// Show final summary
 	fmt.Fprintf(w, "\n")
 	printHeader(w, "Final Snapshot Summary")
-	return a.outputSummary(cmd, snapshots[len(snapshots)-1])
+	return a.OutputSummary(cmd, snapshots[len(snapshots)-1])
 }
 
-func (a *Analyze) printSnapshotDiff(w io.Writer, before, after *Snapshot) {
+func (a *Analyze) PrintSnapshotDiff(w io.Writer, before, after *Snapshot) {
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
 	fmt.Fprintln(tw, "\nRESOURCE COUNTS:")
@@ -369,10 +369,10 @@ func (a *Analyze) printSnapshotDiff(w io.Writer, before, after *Snapshot) {
 	tw.Flush()
 
 	// Show bundle size changes
-	a.printBundleSizeChanges(w, before, after)
+	a.PrintBundleSizeChanges(w, before, after)
 }
 
-func (a *Analyze) printBundleSizeChanges(w io.Writer, before, after *Snapshot) {
+func (a *Analyze) PrintBundleSizeChanges(w io.Writer, before, after *Snapshot) {
 	beforeSizes := make(map[string]int64)
 	for _, b := range before.Bundles {
 		if b.SizeBytes != nil {
@@ -410,7 +410,7 @@ func (a *Analyze) printBundleSizeChanges(w io.Writer, before, after *Snapshot) {
 }
 
 //nolint:gocyclo
-func (a *Analyze) outputIssues(cmd *cobra.Command, snapshots []*Snapshot) error {
+func (a *Analyze) OutputIssues(cmd *cobra.Command, snapshots []*Snapshot) error {
 	w := cmd.OutOrStdout()
 	snapshot := snapshots[len(snapshots)-1]
 
@@ -558,17 +558,17 @@ func (a *Analyze) outputIssues(cmd *cobra.Command, snapshots []*Snapshot) error 
 	return nil
 }
 
-func (a *Analyze) outputDetailed(cmd *cobra.Command, snapshots []*Snapshot) error {
+func (a *Analyze) OutputDetailed(cmd *cobra.Command, snapshots []*Snapshot) error {
 	w := cmd.OutOrStdout()
 	snapshot := snapshots[len(snapshots)-1]
 
 	// First show summary
-	if err := a.outputSummary(cmd, snapshot); err != nil {
+	if err := a.OutputSummary(cmd, snapshot); err != nil {
 		return err
 	}
 
 	// Then show issues
-	if err := a.outputIssues(cmd, snapshots); err != nil {
+	if err := a.OutputIssues(cmd, snapshots); err != nil {
 		return err
 	}
 
@@ -631,7 +631,7 @@ func (a *Analyze) outputDetailed(cmd *cobra.Command, snapshots []*Snapshot) erro
 	return nil
 }
 
-func (a *Analyze) outputJSON(cmd *cobra.Command, snapshots []*Snapshot) error {
+func (a *Analyze) OutputJSON(cmd *cobra.Command, snapshots []*Snapshot) error {
 	type Output struct {
 		SnapshotCount int         `json:"snapshotCount"`
 		Latest        *Snapshot   `json:"latest"`
@@ -662,7 +662,7 @@ func (a *Analyze) compareFiles(cmd *cobra.Command, file1, file2 string) error {
 	}
 	defer f1.Close()
 
-	snapshots1, err := a.readSnapshots(f1)
+	snapshots1, err := a.ReadSnapshots(f1)
 	if err != nil {
 		return fmt.Errorf("failed to read %s: %w", file1, err)
 	}
@@ -677,7 +677,7 @@ func (a *Analyze) compareFiles(cmd *cobra.Command, file1, file2 string) error {
 	}
 	defer f2.Close()
 
-	snapshots2, err := a.readSnapshots(f2)
+	snapshots2, err := a.ReadSnapshots(f2)
 	if err != nil {
 		return fmt.Errorf("failed to read %s: %w", file2, err)
 	}
@@ -699,7 +699,7 @@ func (a *Analyze) compareFiles(cmd *cobra.Command, file1, file2 string) error {
 	fmt.Fprintf(w, "Before: %s (%s)\n", file1, before.Timestamp) //nolint:gosec // G705 false positive: w is a CLI stdout writer, not an HTTP ResponseWriter
 	fmt.Fprintf(w, "After:  %s (%s)\n", file2, after.Timestamp)  //nolint:gosec // G705 false positive: w is a CLI stdout writer, not an HTTP ResponseWriter
 
-	a.printSnapshotDiff(w, before, after)
+	a.PrintSnapshotDiff(w, before, after)
 
 	return nil
 }

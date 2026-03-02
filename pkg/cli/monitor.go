@@ -451,7 +451,7 @@ func (m *Monitor) Run(cmd *cobra.Command, args []string) error {
 }
 
 func (m *Monitor) collectAndOutput(ctx context.Context, c client.Client, cmd *cobra.Command) error {
-	resources, err := m.collectResources(ctx, c)
+	resources, err := m.CollectResources(ctx, c)
 	if err != nil {
 		return err
 	}
@@ -466,7 +466,7 @@ func (m *Monitor) collectAndOutput(ctx context.Context, c client.Client, cmd *co
 	return nil
 }
 
-func (m *Monitor) collectResources(ctx context.Context, c client.Client) (*Snapshot, error) {
+func (m *Monitor) CollectResources(ctx context.Context, c client.Client) (*Snapshot, error) {
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 
 	// Collect controller info
