@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/cleanup"
 	"math"
 	"strconv"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	command "github.com/rancher/fleet/internal/cmd"
-	"github.com/rancher/fleet/internal/cmd/cli/cleanup"
 )
 
 // NewCleanup returns a subcommand to `cleanup` cluster registrations

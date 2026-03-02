@@ -5,14 +5,13 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/rancher/fleet/pkg/cli"
 
 	"github.com/onsi/gomega/gbytes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	clihelper "github.com/rancher/fleet/integrationtests/cli"
 	"github.com/rancher/fleet/integrationtests/utils"
-	"github.com/rancher/fleet/internal/cmd/cli"
-
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

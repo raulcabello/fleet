@@ -247,3 +247,5 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.2-0.20260122202528-d9cc6641c482 // indirect
 )
+
+replace github.com/rancher/fleet => github.com/raulcabello/fleet v0.0.0-20260302071400-7afa158b5729

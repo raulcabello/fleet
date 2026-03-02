@@ -2,6 +2,7 @@ package gitcloner
 
 import (
 	"errors"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule"
 	"os"
 	"strings"
 	"testing"
@@ -14,7 +15,6 @@ import (
 	httpgit "github.com/go-git/go-git/v5/plumbing/transport/http"
 	gossh "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/google/go-cmp/cmp"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule"
 )
 
 type fakeGetter struct{}

@@ -2,6 +2,7 @@ package strategy
 
 import (
 	"context"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 	"testing"
 
 	"github.com/go-git/go-billy/v5/memfs"
@@ -9,7 +10,6 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

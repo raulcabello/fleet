@@ -11,12 +11,12 @@ package mocks
 
 import (
 	context "context"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 	reflect "reflect"
 
 	git "github.com/go-git/go-git/v5"
 	plumbing "github.com/go-git/go-git/v5/plumbing"
 	transport "github.com/go-git/go-git/v5/plumbing/transport"
-	capability "github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 	gomock "go.uber.org/mock/gomock"
 )
 

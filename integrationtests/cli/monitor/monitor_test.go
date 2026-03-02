@@ -2,12 +2,12 @@ package monitor
 
 import (
 	"encoding/json"
+	"github.com/rancher/fleet/pkg/cli"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 
-	"github.com/rancher/fleet/internal/cmd/cli"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"

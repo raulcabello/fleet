@@ -2,6 +2,7 @@ package singlecluster_test
 
 import (
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli"
 	"math/rand"
 	"os"
 	"path"
@@ -17,7 +18,6 @@ import (
 	"github.com/rancher/fleet/e2e/testenv"
 	"github.com/rancher/fleet/e2e/testenv/githelper"
 	"github.com/rancher/fleet/e2e/testenv/kubectl"
-	"github.com/rancher/fleet/internal/cmd/cli"
 	"sigs.k8s.io/yaml"
 )
 

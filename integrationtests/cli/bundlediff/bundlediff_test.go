@@ -3,6 +3,7 @@ package bundlediff
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/rancher/fleet/internal/cmd/cli"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 	"github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1/summary"
 

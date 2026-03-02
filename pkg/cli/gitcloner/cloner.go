@@ -2,6 +2,7 @@ package gitcloner
 
 import (
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule"
 	"os"
 	"strings"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule"
 	fleetgithub "github.com/rancher/fleet/internal/github"
 	fleetssh "github.com/rancher/fleet/internal/ssh"
 	giturls "github.com/rancher/fleet/pkg/git-urls"

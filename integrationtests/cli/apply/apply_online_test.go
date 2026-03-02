@@ -2,6 +2,7 @@ package apply
 
 import (
 	"context"
+	"github.com/rancher/fleet/pkg/cli/apply"
 	"time"
 
 	"go.uber.org/mock/gomock"
@@ -10,7 +11,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/rancher/fleet/integrationtests/cli"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
 	"github.com/rancher/fleet/internal/mocks"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 

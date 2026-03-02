@@ -2,6 +2,8 @@
 package main
 
 import (
+	cmds "github.com/rancher/fleet/pkg/cli"
+	fleetapply "github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"strings"
 
@@ -17,9 +19,6 @@ import (
 
 	"github.com/rancher/wrangler/v3/pkg/signals"
 	"github.com/sirupsen/logrus"
-
-	cmds "github.com/rancher/fleet/internal/cmd/cli"
-	fleetapply "github.com/rancher/fleet/internal/cmd/cli/apply"
 )
 
 func main() {

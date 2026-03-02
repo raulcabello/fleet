@@ -3,27 +3,27 @@ package strategy
 import (
 	"context"
 	"errors"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 	"strings"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 )
 
-func TestFullSHAStrategy_Type(t *testing.T) {
-	s := NewFullSHAStrategy(nil)
-	if s.Type() != capability.StrategyFullSHA {
-		t.Errorf("expected %v, got %v", capability.StrategyFullSHA, s.Type())
+func TestFullCloneStrategy_Type(t *testing.T) {
+	s := NewFullCloneStrategy(nil)
+	if s.Type() != capability.StrategyFullClone {
+		t.Errorf("expected %v, got %v", capability.StrategyFullClone, s.Type())
 	}
 }
 
-func TestFullSHAStrategy_Success(t *testing.T) {
+func TestFullCloneStrategy_Success(t *testing.T) {
 	fetchCalled := false
 	checkoutCalled := false
 	expectedHash := plumbing.NewHash("abc123")
 
-	s := &FullSHAStrategy{
+	s := &FullCloneStrategy{
 		fetchFunc: func(ctx context.Context, r *git.Repository) error {
 			fetchCalled = true
 			return nil
@@ -50,8 +50,8 @@ func TestFullSHAStrategy_Success(t *testing.T) {
 	}
 }
 
-func TestFullSHAStrategy_FetchError(t *testing.T) {
-	s := &FullSHAStrategy{
+func TestFullCloneStrategy_FetchError(t *testing.T) {
+	s := &FullCloneStrategy{
 		fetchFunc: func(ctx context.Context, r *git.Repository) error {
 			return errors.New("network error")
 		},
@@ -74,8 +74,8 @@ func TestFullSHAStrategy_FetchError(t *testing.T) {
 	}
 }
 
-func TestFullSHAStrategy_CheckoutError(t *testing.T) {
-	s := &FullSHAStrategy{
+func TestFullCloneStrategy_CheckoutError(t *testing.T) {
+	s := &FullCloneStrategy{
 		fetchFunc: func(ctx context.Context, r *git.Repository) error {
 			return nil
 		},
@@ -83,6 +83,7 @@ func TestFullSHAStrategy_CheckoutError(t *testing.T) {
 			return errors.New("checkout failed")
 		},
 	}
+
 	CommitHash := plumbing.NewHash("abc123")
 	err := s.Execute(context.Background(), nil, CommitHash)
 
@@ -94,11 +95,11 @@ func TestFullSHAStrategy_CheckoutError(t *testing.T) {
 	}
 }
 
-func TestFullSHAStrategy_ContextCancellation(t *testing.T) {
+func TestFullCloneStrategy_ContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	s := &FullSHAStrategy{
+	s := &FullCloneStrategy{
 		fetchFunc: func(ctx context.Context, r *git.Repository) error {
 			return ctx.Err()
 		},
@@ -117,8 +118,8 @@ func TestFullSHAStrategy_ContextCancellation(t *testing.T) {
 	}
 }
 
-func TestNewFullSHAStrategy(t *testing.T) {
-	s := NewFullSHAStrategy(nil)
+func TestNewFullCloneStrategy(t *testing.T) {
+	s := NewFullCloneStrategy(nil)
 
 	if s == nil {
 		t.Fatal("expected non-nil strategy")

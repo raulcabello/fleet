@@ -2,8 +2,7 @@ package submodule
 
 import (
 	"context"
-
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 
 	"errors"
 	"testing"

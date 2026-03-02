@@ -2,10 +2,10 @@ package target_test
 
 import (
 	"github.com/onsi/gomega/gbytes"
+	"github.com/rancher/fleet/pkg/cli"
 
 	clihelper "github.com/rancher/fleet/integrationtests/cli"
 	"github.com/rancher/fleet/integrationtests/utils"
-	"github.com/rancher/fleet/internal/cmd/cli"
 	fleetv1 "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"

@@ -3,12 +3,12 @@ package strategy
 import (
 	"context"
 	"errors"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 	"strings"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 )
 
 func TestIncrementalDeepenStrategy_Type(t *testing.T) {

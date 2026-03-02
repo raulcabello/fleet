@@ -5,12 +5,12 @@ package submodule
 import (
 	"context"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
+	strategy2 "github.com/rancher/fleet/pkg/cli/gitcloner/submodule/strategy"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/strategy"
 )
 
 // Strategy defines the interface for fetch strategies.
@@ -105,10 +105,10 @@ func NewFetcher(auth transport.AuthMethod, repo *git.Repository, opts ...Fetcher
 	}
 	if f.strategies == nil {
 		f.strategies = map[capability.StrategyType]Strategy{
-			capability.StrategyShallowSHA:        strategy.NewShallowSHAStrategy(auth),
-			capability.StrategyFullSHA:           strategy.NewFullSHAStrategy(auth),
-			capability.StrategyIncrementalDeepen: strategy.NewIncrementalStrategy(auth),
-			capability.StrategyFullClone:         strategy.NewFullCloneStrategy(auth),
+			capability.StrategyShallowSHA:        strategy2.NewShallowSHAStrategy(auth),
+			capability.StrategyFullSHA:           strategy2.NewFullSHAStrategy(auth),
+			capability.StrategyIncrementalDeepen: strategy2.NewIncrementalStrategy(auth),
+			capability.StrategyFullClone:         strategy2.NewFullCloneStrategy(auth),
 		}
 	}
 

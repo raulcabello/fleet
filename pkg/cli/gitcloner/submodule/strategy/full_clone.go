@@ -3,12 +3,12 @@ package strategy
 import (
 	"context"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 )
 
 // FullCloneStrategy fetches the entire repository (all branches and tags).

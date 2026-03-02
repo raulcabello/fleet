@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/dump"
 	"io"
 	"os"
 	"strings"
@@ -15,7 +16,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/rancher/fleet/e2e/testenv"
-	"github.com/rancher/fleet/internal/cmd/cli/dump"
 )
 
 var _ = Describe("Fleet dump", Label("sharding"), func() {

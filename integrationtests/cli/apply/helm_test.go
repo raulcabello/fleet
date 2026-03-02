@@ -3,6 +3,7 @@ package apply
 import (
 	"context"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/apply"
 	"io/fs"
 	"os"
 	"os/exec"
@@ -13,7 +14,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/rancher/fleet/integrationtests/cli"
 	"github.com/rancher/fleet/internal/bundlereader"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 	"github.com/testcontainers/testcontainers-go"
 	"sigs.k8s.io/yaml"

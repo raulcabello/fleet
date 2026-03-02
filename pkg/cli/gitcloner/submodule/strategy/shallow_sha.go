@@ -3,34 +3,34 @@ package strategy
 import (
 	"context"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 )
 
-// FullSHAStrategy fetches a specific commit with full history (no depth limit).
-// This is used when the server supports allow-reachable-sha1-in-want but not shallow.
-type FullSHAStrategy struct {
+// ShallowSHAStrategy fetches a specific commit with depth=1 (shallow clone).
+// This is the most efficient strategy when the server supports both
+// allow-reachable-sha1-in-want and shallow.
+type ShallowSHAStrategy struct {
 	auth         transport.AuthMethod
 	fetchFunc    FetchFunc
 	checkoutFunc CheckoutFunc
 }
 
-func NewFullSHAStrategy(auth transport.AuthMethod) *FullSHAStrategy {
-	s := &FullSHAStrategy{auth: auth}
+func NewShallowSHAStrategy(auth transport.AuthMethod) *ShallowSHAStrategy {
+	s := &ShallowSHAStrategy{auth: auth}
 	s.checkoutFunc = defaultCheckout
 	return s
 }
 
-func (s *FullSHAStrategy) Type() capability.StrategyType {
-	return capability.StrategyFullSHA
+func (s *ShallowSHAStrategy) Type() capability.StrategyType {
+	return capability.StrategyShallowSHA
 }
 
-func (s *FullSHAStrategy) Execute(ctx context.Context, r *git.Repository, req plumbing.Hash) error {
-
+func (s *ShallowSHAStrategy) Execute(ctx context.Context, r *git.Repository, req plumbing.Hash) error {
 	fetchFunc := s.fetchFunc
 	if fetchFunc == nil {
 		fetchFunc = s.defaultFetch(req)
@@ -48,15 +48,15 @@ func (s *FullSHAStrategy) Execute(ctx context.Context, r *git.Repository, req pl
 	return nil
 }
 
-func (s *FullSHAStrategy) defaultFetch(hash plumbing.Hash) FetchFunc {
+func (s *ShallowSHAStrategy) defaultFetch(hash plumbing.Hash) FetchFunc {
 	return func(ctx context.Context, r *git.Repository) error {
 		refSpec := config.RefSpec(fmt.Sprintf("%s:refs/heads/temp", hash.String()))
 
 		return r.FetchContext(ctx, &git.FetchOptions{
 			RefSpecs: []config.RefSpec{refSpec},
-			// No Depth - fetch full history up to this commit
-			Auth: s.auth,
-			Tags: git.NoTags,
+			Depth:    1,
+			Auth:     s.auth,
+			Tags:     git.NoTags,
 		})
 	}
 }

@@ -3,6 +3,8 @@ package cli
 import (
 	"bytes"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/apply"
+	"github.com/rancher/fleet/pkg/cli/writer"
 	"os"
 	"os/exec"
 	"strings"
@@ -14,8 +16,6 @@ import (
 
 	"github.com/rancher/fleet/internal/bundlereader"
 	command "github.com/rancher/fleet/internal/cmd"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
-	"github.com/rancher/fleet/internal/cmd/cli/writer"
 	ssh "github.com/rancher/fleet/internal/ssh"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 

@@ -2,10 +2,10 @@ package dump
 
 import (
 	"context"
+	"github.com/rancher/fleet/pkg/cli/dump"
 	"testing"
 
 	"github.com/rancher/fleet/integrationtests/utils"
-	"github.com/rancher/fleet/internal/cmd/cli/dump"
 	"github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 
 	. "github.com/onsi/ginkgo/v2"

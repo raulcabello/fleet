@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	fleetcli "github.com/rancher/fleet/pkg/cli"
 	"io"
 	"os"
 	"path/filepath"
@@ -10,7 +11,6 @@ import (
 	"github.com/pkg/errors"
 
 	fleetagent "github.com/rancher/fleet/internal/cmd/agent"
-	fleetcli "github.com/rancher/fleet/internal/cmd/cli"
 	fleetcontroller "github.com/rancher/fleet/internal/cmd/controller"
 
 	"github.com/spf13/cobra"

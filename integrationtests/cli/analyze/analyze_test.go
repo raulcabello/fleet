@@ -2,6 +2,7 @@ package analyze
 
 import (
 	"encoding/json"
+	cli2 "github.com/rancher/fleet/pkg/cli"
 	"os"
 	"path/filepath"
 	"time"
@@ -10,7 +11,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 
-	"github.com/rancher/fleet/internal/cmd/cli"
 	fleet "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,7 +25,7 @@ var _ = Describe("Fleet analyze", func() {
 
 	// Helper to run monitor and save snapshot
 	runMonitor := func(ns string) string {
-		cmd := cli.NewMonitor()
+		cmd := cli2.NewMonitor()
 		args := []string{"--kubeconfig", kubeconfigPath, "-n", ns}
 		cmd.SetArgs(args)
 
@@ -41,7 +41,7 @@ var _ = Describe("Fleet analyze", func() {
 
 	// Helper to run analyze command
 	runAnalyze := func(args []string) (*gbytes.Buffer, *gbytes.Buffer, error) {
-		cmd := cli.NewAnalyze()
+		cmd := cli2.NewAnalyze()
 		cmd.SetArgs(args)
 
 		buf := gbytes.NewBuffer()
@@ -116,8 +116,8 @@ var _ = Describe("Fleet analyze", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			var result struct {
-				SnapshotCount int           `json:"snapshotCount"`
-				Latest        *cli.Snapshot `json:"latest"`
+				SnapshotCount int            `json:"snapshotCount"`
+				Latest        *cli2.Snapshot `json:"latest"`
 			}
 			err = json.Unmarshal(buf.Contents(), &result)
 			Expect(err).NotTo(HaveOccurred())
@@ -299,7 +299,7 @@ var _ = Describe("Fleet analyze", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			var result struct {
-				Latest *cli.Snapshot `json:"latest"`
+				Latest *cli2.Snapshot `json:"latest"`
 			}
 			err = json.Unmarshal(buf.Contents(), &result)
 			Expect(err).NotTo(HaveOccurred())

@@ -1,12 +1,12 @@
 package cli
 
 import (
+	"github.com/rancher/fleet/pkg/cli/match"
 	"os"
 
 	"github.com/spf13/cobra"
 
 	command "github.com/rancher/fleet/internal/cmd"
-	"github.com/rancher/fleet/internal/cmd/cli/match"
 )
 
 // NewTest returns a subcommand to test bundle matching, deprecated

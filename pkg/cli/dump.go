@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/dump"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -11,7 +12,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	command "github.com/rancher/fleet/internal/cmd"
-	"github.com/rancher/fleet/internal/cmd/cli/dump"
 )
 
 /*

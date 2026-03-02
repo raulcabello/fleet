@@ -2,10 +2,10 @@
 package cli
 
 import (
+	gitcloner2 "github.com/rancher/fleet/pkg/cli/gitcloner"
 	"github.com/spf13/cobra"
 
 	command "github.com/rancher/fleet/internal/cmd"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner"
 	"github.com/rancher/fleet/pkg/version"
 )
 
@@ -28,7 +28,7 @@ func App() *cobra.Command {
 
 		NewTarget(),
 		NewDeploy(),
-		gitcloner.NewCmd(gitcloner.New()),
+		gitcloner2.NewCmd(gitcloner2.New()),
 
 		NewMonitor(),
 		NewAnalyze(),

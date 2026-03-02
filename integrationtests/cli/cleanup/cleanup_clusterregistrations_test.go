@@ -1,9 +1,9 @@
 package cleanup
 
 import (
+	"github.com/rancher/fleet/pkg/cli/cleanup"
 	"time"
 
-	"github.com/rancher/fleet/internal/cmd/cli/cleanup"
 	fleetv1 "github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

@@ -2,6 +2,7 @@ package apply
 
 import (
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"path"
 	"path/filepath"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/rancher/fleet/integrationtests/cli"
 	"github.com/rancher/fleet/internal/bundlereader"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
 	"github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 )
 

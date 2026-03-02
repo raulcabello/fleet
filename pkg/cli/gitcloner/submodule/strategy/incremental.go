@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/gitcloner/submodule/capability"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner/submodule/capability"
 )
 
 const (

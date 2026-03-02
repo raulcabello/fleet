@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	fleetapply "github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"slices"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	fleetapply "github.com/rancher/fleet/internal/cmd/cli/apply"
 	"github.com/rancher/fleet/internal/cmd/controller/finalize"
 	"github.com/rancher/fleet/internal/config"
 	"github.com/rancher/fleet/internal/mocks"

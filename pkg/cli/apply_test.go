@@ -2,6 +2,7 @@ package cli
 
 import (
 	"errors"
+	"github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"testing"
 
@@ -9,7 +10,6 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/rancher/fleet/internal/bundlereader"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
 )
 
 const (

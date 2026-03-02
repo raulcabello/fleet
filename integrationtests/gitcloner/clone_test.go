@@ -8,13 +8,12 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	gitcloner2 "github.com/rancher/fleet/pkg/cli/gitcloner"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/rancher/fleet/internal/cmd/cli/gitcloner"
 
 	dockercontainer "github.com/docker/docker/api/types/container"
 	"github.com/go-git/go-git/v5"
@@ -64,7 +63,7 @@ var (
 var _ = Describe("Applying a git job gets content from git repo", Label("networking"), Ordered, func() {
 
 	var (
-		opts          *gitcloner.GitCloner
+		opts          *gitcloner2.GitCloner
 		private       bool
 		cloneErr      error
 		tmp           string
@@ -103,14 +102,14 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 		When("cloning a public repo that contains a README.md file providing a branch", func() {
 			BeforeEach(func() {
 				private = false
-				opts = &gitcloner.GitCloner{
+				opts = &gitcloner2.GitCloner{
 					InsecureSkipTLS: true,
 					Branch:          "master",
 				}
 			})
 
 			JustBeforeEach(func() {
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				cloneErr = c.CloneRepo(opts)
 				Expect(cloneErr).NotTo(HaveOccurred())
 			})
@@ -124,13 +123,13 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 		When("cloning a public repo that contains a README.md file providing a revision", func() {
 			BeforeEach(func() {
 				private = false
-				opts = &gitcloner.GitCloner{
+				opts = &gitcloner2.GitCloner{
 					InsecureSkipTLS: true,
 				}
 			})
 
 			JustBeforeEach(func() {
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				opts.Revision = initialCommit
 				cloneErr = c.CloneRepo(opts)
 				Expect(cloneErr).NotTo(HaveOccurred())
@@ -146,13 +145,13 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 			When("No authentication is provided", func() {
 				BeforeEach(func() {
 					private = true
-					opts = &gitcloner.GitCloner{
+					opts = &gitcloner2.GitCloner{
 						InsecureSkipTLS: true,
 					}
 				})
 
 				JustBeforeEach(func() {
-					c := gitcloner.New()
+					c := gitcloner2.New()
 					cloneErr = c.CloneRepo(opts)
 				})
 
@@ -164,7 +163,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 			When("Basic authentication is provided", func() {
 				BeforeEach(func() {
 					private = true
-					opts = &gitcloner.GitCloner{
+					opts = &gitcloner2.GitCloner{
 						InsecureSkipTLS: true,
 						Username:        gogsUser,
 						PasswordFile:    "assets/gogs/password",
@@ -172,7 +171,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 				})
 
 				JustBeforeEach(func() {
-					c := gitcloner.New()
+					c := gitcloner2.New()
 					cloneErr = c.CloneRepo(opts)
 					Expect(cloneErr).NotTo(HaveOccurred())
 				})
@@ -187,11 +186,11 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 		When("Insecure skip tls is not true, and no caBundle is provided", func() {
 			BeforeEach(func() {
 				private = false
-				opts = &gitcloner.GitCloner{}
+				opts = &gitcloner2.GitCloner{}
 			})
 
 			JustBeforeEach(func() {
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				cloneErr = c.CloneRepo(opts)
 			})
 
@@ -205,7 +204,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 
 			BeforeEach(func() {
 				private = false
-				opts = &gitcloner.GitCloner{}
+				opts = &gitcloner2.GitCloner{}
 			})
 
 			AfterEach(func() {
@@ -221,7 +220,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 				Expect(err).NotTo(HaveOccurred())
 				opts.CABundleFile = caBundleFile.Name()
 
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				cloneErr = c.CloneRepo(opts)
 			})
 
@@ -272,7 +271,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 		When("the cloned repo is private and contains a README.md file", func() {
 			BeforeEach(func() {
 				private = true
-				opts = &gitcloner.GitCloner{
+				opts = &gitcloner2.GitCloner{
 					InsecureSkipTLS: true,
 				}
 			})
@@ -283,7 +282,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 			})
 
 			JustBeforeEach(func() {
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				Eventually(func() error {
 					return c.CloneRepo(opts)
 				}).ShouldNot(HaveOccurred())
@@ -300,7 +299,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 
 			BeforeEach(func() {
 				private = true
-				opts = &gitcloner.GitCloner{
+				opts = &gitcloner2.GitCloner{
 					InsecureSkipTLS: true,
 				}
 			})
@@ -321,7 +320,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 			})
 
 			It("clones successfully when a matching host key is provided", func() {
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				Eventually(func() error {
 					return c.CloneRepo(opts)
 				}).ShouldNot(HaveOccurred())
@@ -339,7 +338,7 @@ var _ = Describe("Applying a git job gets content from git repo", Label("network
 				err = os.Setenv("FLEET_KNOWN_HOSTS", "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl")
 				Expect(err).NotTo(HaveOccurred())
 
-				c := gitcloner.New()
+				c := gitcloner2.New()
 				Eventually(func() error {
 					return c.CloneRepo(opts)
 				}).Should(MatchError(&knownhosts.KeyError{}))

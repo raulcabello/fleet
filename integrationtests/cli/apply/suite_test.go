@@ -2,11 +2,11 @@ package apply
 
 import (
 	"context"
+	"github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"testing"
 
 	"github.com/rancher/fleet/integrationtests/utils"
-	"github.com/rancher/fleet/internal/cmd/cli/apply"
 	"github.com/rancher/fleet/internal/mocks"
 	"github.com/rancher/fleet/pkg/apis/fleet.cattle.io/v1alpha1"
 	"github.com/rancher/wrangler/v3/pkg/schemes"

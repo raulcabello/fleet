@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	fleetapply "github.com/rancher/fleet/pkg/cli/apply"
 	"os"
 	"slices"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
-	fleetapply "github.com/rancher/fleet/internal/cmd/cli/apply"
 	"github.com/rancher/fleet/internal/config"
 	fleetgithub "github.com/rancher/fleet/internal/github"
 	"github.com/rancher/fleet/internal/names"

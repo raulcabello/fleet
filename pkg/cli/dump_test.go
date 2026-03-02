@@ -1,12 +1,11 @@
 package cli_test
 
 import (
+	cli2 "github.com/rancher/fleet/pkg/cli"
 	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
-
-	cli "github.com/rancher/fleet/internal/cmd/cli"
 )
 
 func TestDump_ValidateFilterOptions(t *testing.T) {
@@ -14,7 +13,7 @@ func TestDump_ValidateFilterOptions(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		dump             cli.Dump
+		dump             cli2.Dump
 		namespaceChanged bool
 		namespace        string
 		wantErr          string
@@ -23,14 +22,14 @@ func TestDump_ValidateFilterOptions(t *testing.T) {
 		// --all-namespaces behaviour
 		{
 			name: "all-namespaces without explicit namespace is valid",
-			dump: cli.Dump{
+			dump: cli2.Dump{
 				AllNamespaces: true,
 			},
 			wantNamespace: strPtr(""), // default "fleet-local" is cleared to "" by ValidateFilterOptions
 		},
 		{
 			name: "all-namespaces with explicit namespace returns error",
-			dump: cli.Dump{
+			dump: cli2.Dump{
 				AllNamespaces: true,
 			},
 			namespaceChanged: true,
@@ -41,51 +40,51 @@ func TestDump_ValidateFilterOptions(t *testing.T) {
 		// Mutually exclusive secret/content flags
 		{
 			name:    "with-secrets and with-secrets-metadata are mutually exclusive",
-			dump:    cli.Dump{WithSecrets: true, WithSecretsMetadata: true},
+			dump:    cli2.Dump{WithSecrets: true, WithSecretsMetadata: true},
 			wantErr: "--with-secrets and --with-secrets-metadata are mutually exclusive",
 		},
 		{
 			name:    "with-content and with-content-metadata are mutually exclusive",
-			dump:    cli.Dump{WithContent: true, WithContentMetadata: true},
+			dump:    cli2.Dump{WithContent: true, WithContentMetadata: true},
 			wantErr: "--with-content and --with-content-metadata are mutually exclusive",
 		},
 
 		// Mutually exclusive resource filters
 		{
 			name:    "gitrepo and bundle are mutually exclusive",
-			dump:    cli.Dump{Gitrepo: "my-repo", Bundle: "my-bundle"},
+			dump:    cli2.Dump{Gitrepo: "my-repo", Bundle: "my-bundle"},
 			wantErr: "--gitrepo and --bundle are mutually exclusive",
 		},
 		{
 			name:    "gitrepo and helmop are mutually exclusive",
-			dump:    cli.Dump{Gitrepo: "my-repo", Helmop: "my-helmop"},
+			dump:    cli2.Dump{Gitrepo: "my-repo", Helmop: "my-helmop"},
 			wantErr: "--gitrepo and --helmop are mutually exclusive",
 		},
 		{
 			name:    "bundle and helmop are mutually exclusive",
-			dump:    cli.Dump{Bundle: "my-bundle", Helmop: "my-helmop"},
+			dump:    cli2.Dump{Bundle: "my-bundle", Helmop: "my-helmop"},
 			wantErr: "--bundle and --helmop are mutually exclusive",
 		},
 
 		// Resource filters require explicit --namespace
 		{
 			name:    "gitrepo without explicit namespace returns error",
-			dump:    cli.Dump{Gitrepo: "my-repo"},
+			dump:    cli2.Dump{Gitrepo: "my-repo"},
 			wantErr: "--gitrepo, --bundle, and --helmop filters require --namespace to be explicitly specified",
 		},
 		{
 			name:    "bundle without explicit namespace returns error",
-			dump:    cli.Dump{Bundle: "my-bundle"},
+			dump:    cli2.Dump{Bundle: "my-bundle"},
 			wantErr: "--gitrepo, --bundle, and --helmop filters require --namespace to be explicitly specified",
 		},
 		{
 			name:    "helmop without explicit namespace returns error",
-			dump:    cli.Dump{Helmop: "my-helmop"},
+			dump:    cli2.Dump{Helmop: "my-helmop"},
 			wantErr: "--gitrepo, --bundle, and --helmop filters require --namespace to be explicitly specified",
 		},
 		{
 			name:             "gitrepo with explicit namespace is valid",
-			dump:             cli.Dump{Gitrepo: "my-repo", FleetClient: cli.FleetClient{Namespace: "my-ns"}},
+			dump:             cli2.Dump{Gitrepo: "my-repo", FleetClient: cli2.FleetClient{Namespace: "my-ns"}},
 			namespaceChanged: true,
 			namespace:        "my-ns",
 		},
@@ -93,7 +92,7 @@ func TestDump_ValidateFilterOptions(t *testing.T) {
 		// Valid no-op
 		{
 			name: "no flags is valid",
-			dump: cli.Dump{FleetClient: cli.FleetClient{Namespace: "fleet-local"}},
+			dump: cli2.Dump{FleetClient: cli2.FleetClient{Namespace: "fleet-local"}},
 		},
 	}
 

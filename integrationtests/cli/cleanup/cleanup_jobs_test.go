@@ -2,9 +2,8 @@ package cleanup
 
 import (
 	"fmt"
+	"github.com/rancher/fleet/pkg/cli/cleanup"
 	"time"
-
-	"github.com/rancher/fleet/internal/cmd/cli/cleanup"
 
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
